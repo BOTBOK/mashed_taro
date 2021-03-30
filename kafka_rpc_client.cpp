@@ -113,6 +113,9 @@ public:
         
         //订阅topic
         kafka_cunsumer_->subscribe_topic(topic_mgr->client_topic(), std::bind(&RpcClientImpl::deal, this, std::placeholders::_1));
+        
+        //开启监听
+        RPC_THROW_IF(0!= kafka_cunsumer_->start_consumer(), -1, "start_consumer error!");
     }
     
     ~RpcClientImpl()

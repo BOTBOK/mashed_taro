@@ -12,6 +12,6 @@ aux_source_directory(. DIR_SRC)
 
 link_libraries(librdkafka.a librdkafka++.a)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -g)
 
 add_library(test_rpc SHARED ${DIR_SRC})

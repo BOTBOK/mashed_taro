@@ -147,7 +147,7 @@ public:
             delete th_;
     }
     
-    void register_service_cb(RpcInterface *rpc_cb)
+    void register_service_cb(RpcInterface *rpc_cb) override
     {
         std::lock_guard<std::mutex> lock(rpc_cb_mutex_);
         
@@ -158,7 +158,11 @@ public:
             
         RPC_THROW_IF(!rpc_cb_map_.emplace(rpc_cb->interface_name(), rpc_cb).second, RPC_SERVICE_REGISTER_ERROR, "注册失败！");
     }
-    
+
+    void start() override
+    {
+        RPC_THROW_IF(0!= kafka_cunsumer_->start_consumer(), -1, "start_consumer error!");
+    }
 };
 
 RpcService * create_rpc_service(KafkaBrokerMgr* broker_mgr, KafkaTopicMgr* topic_mgr)

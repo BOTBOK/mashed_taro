@@ -49,6 +49,12 @@ public:
      */
     virtual void register_service_cb(RpcInterface *rpc_cb) = 0;
     
+    /**
+     * @brief: 服务器开启监听
+     * @throw: 失败则抛出异常。每个service只能start一次，重复start将会抛出异常
+     */
+    virtual void start() = 0;
+
     virtual ~RpcService() = default;
 };
 
