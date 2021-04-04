@@ -66,6 +66,9 @@ public:
                             cb = _find->second;
                     }
                     
+                    if(nullptr == cb)
+                        continue;
+
                     std::string response;
                     //rpc try catch 可以捕获所有异常，防止rpc调用代码调用出错抛出异常
                     RPC_TRY
@@ -151,7 +154,7 @@ public:
     {
         std::lock_guard<std::mutex> lock(rpc_cb_mutex_);
         
-        if(rpc_cb_map_.find(rpc_cb->interface_name()) == rpc_cb_map_.end())
+        if(rpc_cb_map_.find(rpc_cb->interface_name()) != rpc_cb_map_.end())
         {
             RPC_THROW(RPC_SERVICE_REGISTER_ERROR, "接口：" << rpc_cb->interface_name() << "已注册");
         }

@@ -5,18 +5,19 @@
 #include "kafka_rpc_exception.hpp"
 
 #include <iostream>
+#include <thread>
 
 class ClientKafkaBrokerMgr: public KafkaBrokerMgr
 {
 public:
     std::string zk_list() override
     {
-        return "10.50.38.233:2181,10.50.38.234:2181,10.50.38.235:2181";
+        return "127.0.0.1:2181";
     }
     
     std::string broker_list() override
     {
-        return "10.50.38.233:9092,10.50.38.234:9092,10.50.38.235:9092";
+        return "127.0.0.1:9092";
     }
     
 };
@@ -25,19 +26,19 @@ public:
 class ClientKafkaTopicMgr: public KafkaTopicMgr
 {
 public:
-    std::string client_topic() 
+        std::string client_topic() 
     {
-    	return "client-test";
+        return "client-test";
     }
 
     std::string client_group_id()
     {
-    	return "101";
+        return "100";
     }
 
     std::string service_topic()
     {
-    	return "service-test";
+        return "service-test";
     }
 
     std::string service_group_id()
@@ -66,6 +67,8 @@ int main(int argc, char const *argv[])
     {
         std::cout << "error: client_, err_code:[" << ex.err_code() << "], err_msg" << ex.err_msg() << std::endl;
     }
+
+
 
     return 0;
 }

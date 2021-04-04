@@ -5,18 +5,20 @@
 #include "kafka_rpc_exception.hpp"
 
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 class ServiceKafkaBrokerMgr: public KafkaBrokerMgr
 {
 public:
     std::string zk_list() override
     {
-        return "10.50.38.233:2181,10.50.38.234:2181,10.50.38.235:2181";
+        return "127.0.0.1:2181";
     }
     
     std::string broker_list() override
     {
-        return "10.50.38.233:9092,10.50.38.234:9092,10.50.38.235:9092";
+       return "127.0.0.1:9092";
     }
     
 };
@@ -42,7 +44,7 @@ public:
 
     std::string service_group_id()
     {
-        return "100";
+        return "101";
     }
 };
 
@@ -92,6 +94,11 @@ int main(int argc, char const *argv[])
         service_->register_service_cb(&interface_cfg_);
 
         service_->start();
+
+        while(true)
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+        }
     }
     RPC_CATCH
     {

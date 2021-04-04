@@ -55,6 +55,7 @@ public:
     }
 };
 
+/* todo 这个压根用不上*/
 class ConsumeCbBase: public RdKafka::ConsumeCb
 {
 private:
@@ -161,6 +162,9 @@ private:
     
     //thread
     std::thread *th_;
+
+    //endlvent_cb
+    ExampleEventCb ex_event_cb_;
     
 private:
     bool inited_;
@@ -203,10 +207,12 @@ protected:
     
     void deal_msg_no_error(RdKafka::Message &message) override
     {
-        ConsumeCbBase::deal_msg_no_error(message);
+        //ConsumeCbBase::deal_msg_no_error(message);
         
-        //当程序开始监听时 不允许注册，监听只有一个线程不做加锁处理
-        auto _find = func_map_.find(message.topic()->name());
+
+        //todo 这个锁肯定需要优化
+        std::lock_guard<std::mutex> lock(func_mutex_);
+        auto _find = func_map_.find(message.topic_name());
         if(_find != func_map_.end())
         {
             std::string data(static_cast<const char *>(message.payload()), message.len());
@@ -248,6 +254,7 @@ private:
         std::vector<std::string> topics;
         for(auto item : func_map_)
         {
+            std::cout << item.first << std::endl;
             topics.push_back(item.first);
         }
         
@@ -290,25 +297,39 @@ public:
         }
         
         //集群信息 bootstrap.servers可以替换为metadata.broker.list， 设置brokers
-        conf_->set("metadata.broker.list", brokers, errstr);
+        if (conf_->set("metadata.broker.list", brokers, errstr) != RdKafka::Conf::CONF_OK) 
+        {
+            std::cerr << "RdKafka conf set auto.offset.reset failed:" << errstr.c_str() << std::endl;
+        }
         
         //设置consume回调
-        conf_->set("consume_cb", this, errstr);
+        //conf_->set("consume_cb", this, errstr);
         
         //设置event回调
-        ExampleEventCb ex_event_cb;
-        conf_->set("event_cb", &ex_event_cb, errstr);
+        if (conf_->set("event_cb", &ex_event_cb_, errstr) != RdKafka::Conf::CONF_OK) 
+        {
+            std::cerr << "RdKafka conf set auto.offset.reset failed:" << errstr.c_str() << std::endl;
+        }
         
+        //设置topic
+        if (tconf_->set("auto.offset.reset", "smallest", errstr) != RdKafka::Conf::CONF_OK) 
+        {
+            std::cerr << "RdKafka conf set auto.offset.reset failed:" << errstr.c_str() << std::endl;
+        }
+
         //默认topicz设置
-        conf_->set("default_topic_conf", tconf_, errstr);
-        
+        if (conf_->set("default_topic_conf", tconf_, errstr)!= RdKafka::Conf::CONF_OK) 
+        {
+            std::cerr << "RdKafka conf set auto.offset.reset failed:" << errstr.c_str() << std::endl;
+        }
+
         //创建consumer
         consumer_ = RdKafka::KafkaConsumer::create(conf_, errstr);
         if (!consumer_) {
             std::cerr << "Failed to create consumer: " << errstr << std::endl;
             return -1;
         }
-        std::cout << "% Created consumer " << consumer_->name() << std::endl;
+        std::cout << "% Created consumer:" << consumer_->name() << std::endl;
         
         inited_ = true;
         return 0;
