@@ -50,6 +50,8 @@ private:
     //kafka 生产者
     RdKafka::Producer *producer_;
     
+    //回调函数
+    ExampleDeliveryReportCb ex_dr_cb_;
 private:
     bool inited_;
     bool released_;
@@ -69,9 +71,9 @@ public:
             std::cerr << errstr << std::endl;
             return -1;
         }
-        
-        ExampleDeliveryReportCb ex_dr_cb;
-        if (conf_->set("dr_cb", &ex_dr_cb, errstr) != RdKafka::Conf::CONF_OK) {
+
+        //
+        if (conf_->set("dr_cb", &ex_dr_cb_, errstr) != RdKafka::Conf::CONF_OK) {
             std::cerr << errstr << std::endl;
             return -1;
         }
@@ -114,7 +116,7 @@ public:
         return 0;
     }
     
-    int product_message(const std::string &topic, const std::string &data) override
+    int product_message(const std::string topic, const std::string data) override
     {
         if(!inited_ || released_)
             return -1;

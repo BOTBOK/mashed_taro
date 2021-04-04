@@ -5,7 +5,7 @@
 #include "kafka_rpc_exception.hpp"
 
 #include <iostream>
-#include <thread>
+
 
 class ClientKafkaBrokerMgr: public KafkaBrokerMgr
 {
@@ -58,10 +58,12 @@ int main(int argc, char const *argv[])
         RpcClient *client_ = create_rpc_client(&broker_mgr, &topic_mgr);
 
         std::string response;
-        std::cout << "request data:[hello config], call interfaceianme:[config]" << std::endl;
-        client_->call("config", "hello config", response);
-        std::cout << "response data:[" <<response <<"]" << std::endl;
-
+        for(int i = 0; i < 5000; ++i)
+        {
+            std::cout << "request data:[hello config], call interfaceianme:[config]" << std::endl;
+            client_->call("config", "hello config", response);
+            std::cout << "response data:[" <<response <<"]" << std::endl;
+        }
     }
     RPC_CATCH
     {

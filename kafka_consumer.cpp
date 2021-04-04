@@ -207,7 +207,7 @@ protected:
     
     void deal_msg_no_error(RdKafka::Message &message) override
     {
-        //ConsumeCbBase::deal_msg_no_error(message);
+        ConsumeCbBase::deal_msg_no_error(message);
         
 
         //todo 这个锁肯定需要优化
@@ -254,7 +254,6 @@ private:
         std::vector<std::string> topics;
         for(auto item : func_map_)
         {
-            std::cout << item.first << std::endl;
             topics.push_back(item.first);
         }
         
@@ -311,11 +310,11 @@ public:
             std::cerr << "RdKafka conf set auto.offset.reset failed:" << errstr.c_str() << std::endl;
         }
         
-        //设置topic
+        /*设置topic
         if (tconf_->set("auto.offset.reset", "smallest", errstr) != RdKafka::Conf::CONF_OK) 
         {
             std::cerr << "RdKafka conf set auto.offset.reset failed:" << errstr.c_str() << std::endl;
-        }
+        }*/
 
         //默认topicz设置
         if (conf_->set("default_topic_conf", tconf_, errstr)!= RdKafka::Conf::CONF_OK) 

@@ -22,7 +22,7 @@ public:
      * @parameter: data
      * @return: 成功投递返回0，失败返回-1
      */
-    virtual int product_message(const std::string &topic, const std::string &data) = 0;
+    virtual int product_message(const std::string topic, const std::string data) = 0;
     
     /**
      * @brief 初始化kafka消费类，一个对象只能初始化一次，重复初始化会返回错误

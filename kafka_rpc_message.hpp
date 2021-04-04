@@ -71,17 +71,17 @@ public:
         interface_name_ = message.substr(0, pos);
         std::string tmp_data = message.substr(pos + 1);
         pos = tmp_data.find(":");
-        response_topic_ = message.substr(0, pos);
-        tmp_data  = message.substr(pos + 1);
+        response_topic_ = tmp_data.substr(0, pos);
+        tmp_data  = tmp_data.substr(pos + 1);
         pos = tmp_data.find(":");
-        id_ = message.substr(0, pos);
-        data_ = message.substr(pos+1);
+        id_ = tmp_data.substr(0, pos);
+        data_ = tmp_data.substr(pos+1);
     }
     
     std::string to_string()
     {
         std::stringstream ss;
-        ss << interface_name_ << ":"<< response_topic_ << ":" << data_;
+        ss << interface_name_ << ":"<< response_topic_ << ":" << id_ <<":" << data_;
         return ss.str();
     }
 };

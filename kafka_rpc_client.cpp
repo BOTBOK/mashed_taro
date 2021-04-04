@@ -58,14 +58,13 @@ public:
         RpcMessage msg;
         msg.set_id(get_id());
         msg.set_interface_name(interface_name);
-
         msg.set_response_topic(client_topic_); 
-        
+        msg.set_data(request);
         std::condition_variable cv;
         RpcMessage response_msg;
         {
             std::lock_guard<std::mutex> lock(func_map_mutex_);
-	    func_map_.emplace(msg.id(),std::bind(&RpcClientImpl::deal_response, this, std::placeholders::_1, &response_msg, &cv));
+	       func_map_.emplace(msg.id(),std::bind(&RpcClientImpl::deal_response, this, std::placeholders::_1, &response_msg, &cv));
         }
         
         if(nullptr != kafka_producter_)

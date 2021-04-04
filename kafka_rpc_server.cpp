@@ -87,7 +87,8 @@ public:
                     
                     RpcMessage response_msg;
                     response_msg.set_data(response);
-                    response_msg.set_interface_name(response_msg.interface_name());
+                    response_msg.set_interface_name(msg.interface_name());
+                    response_msg.set_id(msg.id());
                     response_msg.set_response_topic(msg.response_topic());
                     kafka_producter_->product_message(msg.response_topic(), response_msg.to_string());
                 }
